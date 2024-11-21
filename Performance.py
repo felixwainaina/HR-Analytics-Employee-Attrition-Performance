@@ -1,7 +1,10 @@
-import streamlit as st
+# Import necessary libraries
 import pandas as pd
-import matplotlib as plt
+import numpy as np
+import matplotlib.pyplot as plt
 import seaborn as sns
+from statsmodels.tsa.holtwinters import ExponentialSmoothing
+import streamlit as st
 
 # Set page configuration
 st.set_page_config(page_title="Employee Attrition Analysis", layout="wide")
