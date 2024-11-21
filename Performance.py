@@ -1,112 +1,76 @@
 import streamlit as st
 import pandas as pd
-import seaborn as sns
 import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, confusion_matrix
-from sklearn.preprocessing import LabelEncoder
+import seaborn as sns
 
-# Set up the title of the app
+# Set page configuration
+st.set_page_config(page_title="Employee Attrition Analysis", layout="wide")
+
+# Title of the application
 st.title("Employee Attrition Analysis")
 
-# Step 1: Upload CSV file
-st.sidebar.header("Upload CSV File")
-uploaded_file = st.sidebar.file_uploader("Choose a CSV file", type="csv")
+# Upload CSV file
+uploaded_file = st.file_uploader("Upload your employee data CSV file", type=["csv"])
 
 if uploaded_file is not None:
-    # Load the data
-    data = pd.read_csv(uploaded_file)
-    st.write("Data Loaded Successfully!")
-    
-    # Display the first few rows of the dataset
-    st.subheader("Dataset Preview")
-    st.write(data.head())
-    
-    # Check for missing values
-    st.subheader("Missing Values")
-    st.write(data.isnull().sum())
-    
-    # Data Cleaning: Drop missing values for simplicity
-    data.dropna(inplace=True)
+    # Read the data into a DataFrame
+    df = pd.read_csv(uploaded_file)
 
-    # Encode categorical variables using Label Encoding
-    categorical_columns = ['Attrition', 'BusinessTravel', 'Department', 'EducationField', 
-                           'Gender', 'JobRole', 'MaritalStatus', 'Over18', 'OverTime']
-    
-    le = LabelEncoder()
-    for column in categorical_columns:
-        data[column] = le.fit_transform(data[column])
-    
-    # Step 2: Exploratory Data Analysis (EDA)
-    
-    # Attrition Rate Calculation
-    attrition_rate = data['Attrition'].value_counts(normalize=True)[1] * 100
-    st.subheader(f'Attrition Rate: {attrition_rate:.2f}%')
+    # Display basic information about the dataset
+    st.subheader("Dataset Overview")
+    st.write(df.head())
+    st.write(f"Total records: {df.shape[0]}")
+    st.write(f"Total columns: {df.shape[1]}")
 
-    # Correlation Analysis
-    st.subheader("Correlation Matrix")
-    correlation_matrix = data.corr()
-    plt.figure(figsize=(12, 8))
-    sns.heatmap(correlation_matrix, annot=True, fmt=".2f", cmap='coolwarm')
-    st.pyplot(plt)
+    # Display column names for user reference
+    st.subheader("Column Names")
+    st.write(df.columns.tolist())
 
-    # Visualizations: Age Distribution by Attrition Status
-    st.subheader("Age Distribution by Attrition Status")
-    plt.figure(figsize=(10, 6))
-    sns.histplot(data=data, x='Age', hue='Attrition', multiple='stack', bins=30)
-    plt.title('Age Distribution by Attrition Status')
-    plt.xlabel('Age')
-    plt.ylabel('Count')
-    st.pyplot(plt)
+    # Data Cleaning (if necessary)
+    st.subheader("Data Cleaning")
+    if st.checkbox("Show missing values"):
+        missing_values = df.isnull().sum()
+        st.write(missing_values[missing_values > 0])
 
-    # Monthly Income by Attrition Status
-    st.subheader("Monthly Income by Attrition Status")
-    plt.figure(figsize=(10, 6))
-    sns.boxplot(x='Attrition', y='MonthlyIncome', data=data)
-    plt.title('Monthly Income by Attrition Status')
-    plt.xlabel('Attrition')
-    plt.ylabel('Monthly Income')
-    st.pyplot(plt)
+    # Basic Statistics
+    st.subheader("Basic Statistics")
+    st.write(df.describe())
 
-    # Job Role vs. Attrition
-    st.subheader("Job Role vs. Attrition")
-    plt.figure(figsize=(12, 6))
-    sns.countplot(x='JobRole', hue='Attrition', data=data)
-    plt.title('Job Role vs. Attrition')
-    plt.xticks(rotation=45)
-    st.pyplot(plt)
-
-    # Step 3: Predictive Modeling
-    
-    # Define features and target variable
-    X = data.drop(['Attrition'], axis=1)
-    y = data['Attrition']
-
-    # Split the dataset into training and testing sets (70% train, 30% test)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-
-    # Train Logistic Regression Model
-    model = LogisticRegression(max_iter=1000)
-    model.fit(X_train, y_train)
-
-    # Make predictions on the test set
-    y_pred = model.predict(X_test)
-
-    # Evaluate the model's accuracy and confusion matrix
-    accuracy = accuracy_score(y_test, y_pred)
-    
-    st.subheader(f'Accuracy of Logistic Regression Model: {accuracy:.2f}')
-    
-    conf_matrix = confusion_matrix(y_test, y_pred)
-    
-    st.subheader('Confusion Matrix')
-    
+    # Visualizations
+    st.subheader("Attrition Count")
+    attrition_count = df['Attrition'].value_counts()
     fig, ax = plt.subplots()
-    
-   sns.heatmap(conf_matrix, annot=True, fmt='d', ax=ax)
-   ax.set_xlabel('Predicted')
-   ax.set_ylabel('Actual')
-   ax.set_title('Confusion Matrix')
-   st.pyplot(fig)
+    sns.barplot(x=attrition_count.index, y=attrition_count.values, ax=ax)
+    ax.set_title('Attrition Count')
+    ax.set_xlabel('Attrition')
+    ax.set_ylabel('Count')
+    st.pyplot(fig)
 
+    # Job Satisfaction vs Attrition
+    st.subheader("Job Satisfaction vs Attrition")
+    fig, ax = plt.subplots()
+    sns.boxplot(x='Attrition', y='JobSatisfaction', data=df, ax=ax)
+    ax.set_title('Job Satisfaction vs Attrition')
+    st.pyplot(fig)
+
+    # Age Distribution by Attrition
+    st.subheader("Age Distribution by Attrition")
+    fig, ax = plt.subplots()
+    sns.histplot(data=df, x='Age', hue='Attrition', multiple="stack", bins=30, ax=ax)
+    ax.set_title('Age Distribution by Attrition')
+    st.pyplot(fig)
+
+    # Correlation Heatmap
+    st.subheader("Correlation Heatmap")
+    plt.figure(figsize=(12, 8))
+    correlation_matrix = df.corr()
+    sns.heatmap(correlation_matrix, annot=True, fmt=".2f", cmap='coolwarm')
+    plt.title('Correlation Heatmap')
+    st.pyplot(plt)
+
+else:
+    st.warning("Please upload a CSV file to proceed.")
+
+# Footer
+st.sidebar.header("About")
+st.sidebar.text("This application analyzes employee attrition using various metrics.")
