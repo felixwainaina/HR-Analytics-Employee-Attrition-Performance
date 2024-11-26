@@ -42,26 +42,26 @@ if uploaded_file is not None:
     # Visualizations
     st.subheader("Attrition Count")
     attrition_count = df['Attrition'].value_counts()
-    fig, ax = plt.subplots()
-    sns.barplot(x=attrition_count.index, y=attrition_count.values, ax=ax)
+   # fig, ax = plt.subplots()
+   # sns.barplot(x=attrition_count.index, y=attrition_count.values, ax=ax)
     ax.set_title('Attrition Count')
     ax.set_xlabel('Attrition')
     ax.set_ylabel('Count')
-    st.pyplot(fig)
+   # st.pyplot(fig)
 
     # Job Satisfaction vs Attrition
     st.subheader("Job Satisfaction vs Attrition")
-    fig, ax = plt.subplots()
-    sns.boxplot(x='Attrition', y='JobSatisfaction', data=df, ax=ax)
+   # fig, ax = plt.subplots()
+   # sns.boxplot(x='Attrition', y='JobSatisfaction', data=df, ax=ax)
     ax.set_title('Job Satisfaction vs Attrition')
-    st.pyplot(fig)
+   # st.pyplot(fig)
 
     # Age Distribution by Attrition
     st.subheader("Age Distribution by Attrition")
-    fig, ax = plt.subplots()
+   # fig, ax = plt.subplots()
     sns.histplot(data=df, x='Age', hue='Attrition', multiple="stack", bins=30, ax=ax)
     ax.set_title('Age Distribution by Attrition')
-    st.pyplot(fig)
+   # st.pyplot(fig)
 
     # Correlation Heatmap
     st.subheader("Correlation Heatmap")
