@@ -44,10 +44,10 @@ if uploaded_file is not None:
     attrition_count = df['Attrition'].value_counts()
    # fig, ax = plt.subplots()
    # sns.barplot(x=attrition_count.index, y=attrition_count.values, ax=ax)
-    ax.set_title('Attrition Count')
-    ax.set_xlabel('Attrition')
-    ax.set_ylabel('Count')
-   # st.pyplot(fig)
+   # ax.set_title('Attrition Count')
+   # ax.set_xlabel('Attrition')
+  #  ax.set_ylabel('Count')
+  # # st.pyplot(fig)
 
     # Job Satisfaction vs Attrition
     st.subheader("Job Satisfaction vs Attrition")
