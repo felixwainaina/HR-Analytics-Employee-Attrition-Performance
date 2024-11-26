@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 # import matplotlib.pyplot as plt
 # import seaborn as sns
-from statsmodels.tsa.holtwinters import ExponentialSmoothing
+# from statsmodels.tsa.holtwinters import ExponentialSmoothing
 import streamlit as st
 
 # Set page configuration
